@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Watoto Teens Ministry</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f8f9fa;
+            color: #333;
+        }
+        header {
+            background: url('hero-image.jpg') no-repeat center center/cover;
+            color: white;
+            text-align: center;
+            padding: 150px 20px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.7);
+            position: relative;
+            overflow: hidden;
+        }
+        header canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 0;
+        }
+        header h1, header p, header .btn {
+            position: relative;
+            z-index: 1;
+        }
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #222;
+            padding: 15px 50px;
+        }
+        nav a {
+            color: white;
+            margin: 0 15px;
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+        nav a:hover {
+            color: #f4c10f;
+        }
+        .btn {
+            background: #f04c2f;
+            color: white;
+            padding: 12px 25px;
+            text-decoration: none;
+            border-radius: 30px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        .btn:hover {
+            background: #d43f26;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            padding: 50px 0;
+        }
+        .section {
+            background: white;
+            margin: 40px 0;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 4px 4px 20px rgba(0,0,0,0.1);
+        }
+        .section-bg {
+            background: url('images/DeWatermark.ai_1740939618397.png') no-repeat center center/cover;
+            color: white;
+            padding: 80px 40px;
+            text-align: center;
+        }
+        .team {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+        .team img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin-right: 15px;
+        }
+        .cards {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+        .card {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 4px 4px 20px rgba(0,0,0,0.1);
+            text-align: center;
+            width: 30%;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 6px 6px 25px rgba(0,0,0,0.2);
+        }
+        .card img {
+            width: 100%;
+            border-radius: 10px;
+        }
+        footer {
+            background: #111;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 50px;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div style="color: white; font-size: 24px; font-weight: bold;">WatotoYouth</div>
+        <div>
+            <a href="#about">About</a>
+            <a href="#programs">Programs</a>
+            <a href="#contact">Contact</a>
+            <a href="#sign-up" class="btn">Sign Up</a>
+        </div>
+    </nav>
+    
+    <header>
+        <h1>Empowering the Next Generation: Watoto</h1>
+        <p>At Watoto Church, we believe in nurturing the spiritual growth and development of our teenage community.</p>
+        <a href="#learn-more" class="btn">Learn More</a>
+    </header>
+    
+    <div class="container">
+        <h2 style="text-align: center;">Our Teenage Community</h2>
+        <div class="cards">
+            <div class="card">
+                <img src="images/DeWatermark.ai_1740939288438.png" alt="Inspiring">
+                <h3>Inspiring</h3>
+                <p>Our ministry is dedicated to creating a safe and inclusive environment where young people can explore their faith.</p>
+                <a href="#get-involved" class="btn">Get Involved</a>
+            </div>
+            <div class="card">
+                <img src="images/images.jpg" alt="Empowering">
+                <h3>Empowering</h3>
+                <p>Through mentorship and engaging programs, we empower teenagers to become positive change-makers.</p>
+                <a href="#discover" class="btn">Discover</a>
+            </div>
+            <div class="card">
+                <img src="images/download.jpg" alt="Building Character">
+                <h3>Building Character</h3>
+                <p>We support teenagers in their journey, helping them grow into responsible and faith-filled individuals.</p>
+                <a href="#join" class="btn">Join</a>
+            </div>
+        </div>
+    </div>
+    
+    <section class="section-bg">
+        <h2>Impacting the Next</h2>
+        <a href="#explore" class="btn">Explore Opportunities</a>
+    </section>
+    
+    <footer>
+        <p>&copy; 2025 WatotoYouth. All Rights Reserved.</p>
+    </footer>
+
+    <!-- Three.js Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r146/three.min.js"></script>
+
+    <!-- GSAP Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/ScrollTrigger.min.js"></script>
+
+    <!-- Scripts -->
+    <script>
+        // Three.js - 3D Cross
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.querySelector('header').appendChild(renderer.domElement);
+
+        // Cross Geometry
+        const crossGeometry = new THREE.BoxGeometry(1, 3, 1); // Vertical part
+        const horizontalGeometry = new THREE.BoxGeometry(3, 1, 1); // Horizontal part
+        const material = new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true });
+
+        const verticalCross = new THREE.Mesh(crossGeometry, material);
+        const horizontalCross = new THREE.Mesh(horizontalGeometry, material);
+        horizontalCross.position.y = 1; // Adjust position
+
+        const cross = new THREE.Group();
+        cross.add(verticalCross);
+        cross.add(horizontalCross);
+        scene.add(cross);
+
+        // Position the Camera
+        camera.position.z = 5;
+
+        // Animation Loop
+        function animate() {
+            requestAnimationFrame(animate);
+            cross.rotation.x += 0.01;
+            cross.rotation.y += 0.01;
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        // Handle Window Resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // GSAP Animations
+        gsap.from('header h1', {
+            opacity: 0,
+            y: 50,
+            duration: 1.5,
+            delay: 0.5,
+        });
+
+        gsap.from('header p', {
+            opacity: 0,
+            y: 50,
+            duration: 1.5,
+            delay: 1,
+        });
+
+        gsap.from('header .btn', {
+            opacity: 0,
+            y: 50,
+            duration: 1.5,
+            delay: 1.5,
+        });
+
+        gsap.from('.card', {
+            scrollTrigger: '.container',
+            opacity: 0,
+            y: 50,
+            stagger: 0.3,
+            duration: 1,
+        });
+
+        gsap.from('.section-bg h2', {
+            scrollTrigger: '.section-bg',
+            opacity: 0,
+            y: 50,
+            duration: 1,
+        });
+
+        gsap.from('.section-bg .btn', {
+            scrollTrigger: '.section-bg',
+            opacity: 0,
+            y: 50,
+            duration: 1,
+            delay: 0.5,
+        });
+    </script>
+</body>
+</html>
