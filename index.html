@@ -70,20 +70,21 @@
 <body>
   <div class="container">
     <div class="logo">
-      <img src="images/logo.png" alt="Watoto Youth Logo">
+      <img src="images/Screenshot_2025-03-03_184012-removebg-preview.png" alt="Watoto Youth Logo">
     </div>
     <div class="logo-text">Watoto Youth</div>
     <p>Login or Register to access your account.</p>
 
+    <!-- Login Form -->
     <div id="login-form">
       <input type="text" id="login-email" class="input-box" placeholder="Email">
       <input type="password" id="login-password" class="input-box" placeholder="Password">
       <button id="login-btn" class="btn login-btn">Log in</button>
       <button id="show-register-btn" class="btn register-btn">Register</button>
-      <button id="google-login" class="btn google-btn"><i class="fab fa-google"></i> Sign in with Google</button>
       <button id="show-phone-login" class="btn green-btn">Login with Phone</button>
     </div>
 
+    <!-- Register Form -->
     <div id="register-form" class="hidden">
       <input type="text" id="register-name" class="input-box" placeholder="Full Name">
       <input type="text" id="register-email" class="input-box" placeholder="Email">
@@ -93,6 +94,7 @@
       <button id="show-login-btn" class="btn login-btn">Back to Login</button>
     </div>
 
+    <!-- Phone Login -->
     <div id="phone-login" class="hidden">
       <div id="recaptcha-container"></div>
       <input type="text" id="phone-number" class="input-box" placeholder="Enter Phone Number">
@@ -103,17 +105,30 @@
     </div>
   </div>
 
+  <!-- Firebase Script -->
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getAuth, RecaptchaVerifier, signInWithPhoneNumber } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { 
+      initializeApp 
+    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    
+    import { 
+      getAuth, 
+      createUserWithEmailAndPassword, 
+      signInWithEmailAndPassword, 
+      RecaptchaVerifier, 
+      signInWithPhoneNumber 
+    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
+    // Firebase Configuration
     const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
+      apiKey: "AIzaSyDM8nevINzAsc2t5e1GrpXqYhkB7iVciTU",
       authDomain: "watoto-d3928.firebaseapp.com",
+      databaseURL: "https://watoto-d3928-default-rtdb.europe-west1.firebasedatabase.app",
       projectId: "watoto-d3928",
       storageBucket: "watoto-d3928.appspot.com",
       messagingSenderId: "830266640596",
-      appId: "1:830266640596:web:1510452e34692f90c91341"
+      appId: "1:830266640596:web:1510452e34692f90c91341",
+      measurementId: "G-53XXY7KYYY"
     };
 
     const app = initializeApp(firebaseConfig);
@@ -133,6 +148,10 @@
     document.getElementById("show-phone-login").addEventListener("click", () => {
       document.getElementById("login-form").classList.add("hidden");
       document.getElementById("phone-login").classList.remove("hidden");
+
+      window.recaptchaVerifier = new RecaptchaVerifier(auth, "recaptcha-container", {
+        size: "invisible"
+      });
     });
 
     document.getElementById("back-to-login").addEventListener("click", () => {
@@ -140,39 +159,53 @@
       document.getElementById("login-form").classList.remove("hidden");
     });
 
-    // Set up reCAPTCHA
-    window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
-      'size': 'invisible',
-      'callback': (response) => {
-        console.log("reCAPTCHA verified!");
-      },
-      'expired-callback': () => {
-        console.error("reCAPTCHA expired. Please try again.");
-      }
+    // Email Login
+    document.getElementById("login-btn").addEventListener("click", () => {
+      const email = document.getElementById("login-email").value;
+      const password = document.getElementById("login-password").value;
+
+      signInWithEmailAndPassword(auth, email, password)
+        .then(() => {
+          alert("Login successful!");
+          window.location.href = "main.html";
+        })
+        .catch((error) => alert("Login Failed: " + error.message));
     });
 
+    // Register
+    document.getElementById("register-btn").addEventListener("click", () => {
+      const email = document.getElementById("register-email").value;
+      const password = document.getElementById("register-password").value;
+
+      createUserWithEmailAndPassword(auth, email, password)
+        .then(() => {
+          alert("Registration successful!");
+          window.location.href = "main.html";
+        })
+        .catch((error) => alert("Registration Failed: " + error.message));
+    });
+
+    // Phone Login
     document.getElementById("send-otp").addEventListener("click", () => {
       const phoneNumber = document.getElementById("phone-number").value;
+
       signInWithPhoneNumber(auth, phoneNumber, window.recaptchaVerifier)
         .then((confirmationResult) => {
           window.confirmationResult = confirmationResult;
           alert("OTP Sent!");
         })
-        .catch((error) => {
-          console.error("Error sending OTP:", error.message);
-        });
+        .catch((error) => alert("OTP Failed: " + error.message));
     });
 
     document.getElementById("verify-otp").addEventListener("click", () => {
       const otp = document.getElementById("otp-code").value;
+
       window.confirmationResult.confirm(otp)
         .then(() => {
           alert("Phone login successful!");
           window.location.href = "main.html";
         })
-        .catch((error) => {
-          console.error("Invalid OTP:", error.message);
-        });
+        .catch((error) => alert("OTP Verification Failed: " + error.message));
     });
   </script>
 </body>
