@@ -1,14 +1,11 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Watoto Youth</title>
-  <!-- FontAwesome for Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <style>
-    /* General Styles */
     body {
       font-family: Arial, sans-serif;
       background-color: #f9f9f9;
@@ -21,7 +18,7 @@
       box-sizing: border-box;
     }
 
-    .login-container {
+    .container {
       background: white;
       padding: 30px;
       border-radius: 10px;
@@ -29,22 +26,10 @@
       text-align: center;
       width: 100%;
       max-width: 400px;
-      animation: fadeIn 1s ease-in-out;
-    }
-
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(-20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
     }
 
     .logo img {
-      width: 200px; /* Adjust based on your preference */
+      width: 200px;
       margin-bottom: 10px;
     }
 
@@ -61,10 +46,9 @@
       margin: 10px 0;
       border: 1px solid #ccc;
       border-radius: 5px;
-      font-size: 14px;
     }
 
-    .login-btn, .register-btn, .google-btn {
+    .btn {
       width: 100%;
       padding: 12px;
       color: white;
@@ -76,93 +60,118 @@
     }
 
     .login-btn { background-color: #4361ee; }
-    .login-btn:hover { background-color: #364fc7; }
     .register-btn { background-color: #28a745; }
-    .register-btn:hover { background-color: #218838; }
     .google-btn { background-color: #db4437; display: flex; align-items: center; justify-content: center; }
     .google-btn i { margin-right: 10px; }
-    .google-btn:hover { background-color: #c1351d; }
-
+    .green-btn { background-color: #28a745; }
     .hidden { display: none; }
-
-    .contact-us {
-      margin-top: 20px;
-      font-size: 14px;
-      color: #666;
-    }
-
-    .contact-us a {
-      color: #4361ee;
-      text-decoration: none;
-    }
-
-    .contact-us a:hover {
-      text-decoration: underline;
-    }
   </style>
 </head>
 <body>
-  <div class="login-container">
+  <div class="container">
     <div class="logo">
-      <img src="images/Screenshot_2025-03-03_184012-removebg-preview.png" alt="Watoto Youth Logo">
+      <img src="images/logo.png" alt="Watoto Youth Logo">
     </div>
     <div class="logo-text">Watoto Youth</div>
-    <p>Login or register to access your account.</p>
+    <p>Login or Register to access your account.</p>
 
     <div id="login-form">
       <input type="text" id="login-email" class="input-box" placeholder="Email">
       <input type="password" id="login-password" class="input-box" placeholder="Password">
-      <button id="login-btn" class="login-btn">Log in</button>
-      <button class="register-btn" onclick="showRegisterForm()">Register</button>
-      <button id="google-login" class="google-btn"><i class="fab fa-google"></i> Sign in with Google</button>
+      <button id="login-btn" class="btn login-btn">Log in</button>
+      <button id="show-register-btn" class="btn register-btn">Register</button>
+      <button id="google-login" class="btn google-btn"><i class="fab fa-google"></i> Sign in with Google</button>
+      <button id="show-phone-login" class="btn green-btn">Login with Phone</button>
     </div>
 
-    <!-- Contact Us Section -->
-    <div class="contact-us">
-      <p>Need help? Contact us at <a href="email:nyolagiftkamysmosz@gmail.com">nyolagiftkamysmosz@gmail.com</a></p>
+    <div id="register-form" class="hidden">
+      <input type="text" id="register-name" class="input-box" placeholder="Full Name">
+      <input type="text" id="register-email" class="input-box" placeholder="Email">
+      <input type="password" id="register-password" class="input-box" placeholder="Password">
+      <input type="password" id="register-confirm-password" class="input-box" placeholder="Confirm Password">
+      <button id="register-btn" class="btn register-btn">Register</button>
+      <button id="show-login-btn" class="btn login-btn">Back to Login</button>
+    </div>
+
+    <div id="phone-login" class="hidden">
+      <div id="recaptcha-container"></div>
+      <input type="text" id="phone-number" class="input-box" placeholder="Enter Phone Number">
+      <button id="send-otp" class="btn green-btn">Send OTP</button>
+      <input type="text" id="otp-code" class="input-box" placeholder="Enter OTP">
+      <button id="verify-otp" class="btn green-btn">Verify OTP</button>
+      <button id="back-to-login" class="btn login-btn">Back to Login</button>
     </div>
   </div>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getAuth, signInWithPopup, GoogleAuthProvider, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getAuth, RecaptchaVerifier, signInWithPhoneNumber } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
     const firebaseConfig = {
-      apiKey: "AIzaSyDM8nevINzAsc2t5e1GrpXqYhkB7iVciTU",
+      apiKey: "YOUR_API_KEY",
       authDomain: "watoto-d3928.firebaseapp.com",
       projectId: "watoto-d3928",
       storageBucket: "watoto-d3928.appspot.com",
       messagingSenderId: "830266640596",
-      appId: "1:830266640596:web:1510452e34692f90c91341",
-      measurementId: "G-53XXY7KYYY",
+      appId: "1:830266640596:web:1510452e34692f90c91341"
     };
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
-    const provider = new GoogleAuthProvider();
 
-    document.getElementById("google-login").addEventListener("click", () => {
-      signInWithPopup(auth, provider)
-        .then((result) => {
-          alert("Google Sign-in successful!");
-          window.location.href = "main.html";
+    // Show/hide forms
+    document.getElementById("show-register-btn").addEventListener("click", () => {
+      document.getElementById("login-form").classList.add("hidden");
+      document.getElementById("register-form").classList.remove("hidden");
+    });
+
+    document.getElementById("show-login-btn").addEventListener("click", () => {
+      document.getElementById("register-form").classList.add("hidden");
+      document.getElementById("login-form").classList.remove("hidden");
+    });
+
+    document.getElementById("show-phone-login").addEventListener("click", () => {
+      document.getElementById("login-form").classList.add("hidden");
+      document.getElementById("phone-login").classList.remove("hidden");
+    });
+
+    document.getElementById("back-to-login").addEventListener("click", () => {
+      document.getElementById("phone-login").classList.add("hidden");
+      document.getElementById("login-form").classList.remove("hidden");
+    });
+
+    // Set up reCAPTCHA
+    window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+      'size': 'invisible',
+      'callback': (response) => {
+        console.log("reCAPTCHA verified!");
+      },
+      'expired-callback': () => {
+        console.error("reCAPTCHA expired. Please try again.");
+      }
+    });
+
+    document.getElementById("send-otp").addEventListener("click", () => {
+      const phoneNumber = document.getElementById("phone-number").value;
+      signInWithPhoneNumber(auth, phoneNumber, window.recaptchaVerifier)
+        .then((confirmationResult) => {
+          window.confirmationResult = confirmationResult;
+          alert("OTP Sent!");
         })
         .catch((error) => {
-          alert(error.message);
+          console.error("Error sending OTP:", error.message);
         });
     });
 
-    document.getElementById("login-btn").addEventListener("click", () => {
-      const email = document.getElementById("login-email").value;
-      const password = document.getElementById("login-password").value;
-
-      signInWithEmailAndPassword(auth, email, password)
+    document.getElementById("verify-otp").addEventListener("click", () => {
+      const otp = document.getElementById("otp-code").value;
+      window.confirmationResult.confirm(otp)
         .then(() => {
-          alert("Login successful!");
+          alert("Phone login successful!");
           window.location.href = "main.html";
         })
         .catch((error) => {
-          alert(error.message);
+          console.error("Invalid OTP:", error.message);
         });
     });
   </script>
