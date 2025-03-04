@@ -1,115 +1,128 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Watoto Youth</title>
+  <title>Chat - Watoto Youth</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <style>
     body {
       font-family: Arial, sans-serif;
       background-color: #f9f9f9;
+      margin: 0;
+      padding: 0;
       display: flex;
-      justify-content: center;
+      flex-direction: column;
       align-items: center;
       min-height: 100vh;
-      margin: 0;
-      padding: 20px;
-      box-sizing: border-box;
     }
 
-    .container {
-      background: white;
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-      text-align: center;
+    .navbar {
       width: 100%;
-      max-width: 400px;
+      background-color: #4361ee;
+      color: white;
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     }
 
-    .logo img {
-      width: 200px;
-      margin-bottom: 10px;
-    }
-
-    .logo-text {
+    .navbar .logo {
       font-size: 24px;
       font-weight: bold;
-      color: #4361ee;
-      margin-bottom: 20px;
     }
 
-    .input-box {
+    .profile-pic {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    .chat-container {
       width: 100%;
-      padding: 12px;
-      margin: 10px 0;
+      max-width: 600px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+      margin: 20px;
+      padding: 20px;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chat-messages {
+      flex-grow: 1;
+      overflow-y: auto;
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .message {
+      margin-bottom: 10px;
+      padding: 10px;
+      border-radius: 5px;
+      background-color: #f1f1f1;
+    }
+
+    .message .sender {
+      font-weight: bold;
+      color: #4361ee;
+    }
+
+    .chat-input {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .chat-input input {
+      flex-grow: 1;
+      padding: 10px;
       border: 1px solid #ccc;
       border-radius: 5px;
     }
 
-    .btn {
-      width: 100%;
-      padding: 12px;
+    .chat-input button {
+      padding: 10px 20px;
+      background-color: #4361ee;
       color: white;
       border: none;
       border-radius: 5px;
       cursor: pointer;
-      font-size: 16px;
-      margin-top: 10px;
     }
 
-    .login-btn { background-color: #4361ee; }
-    .register-btn { background-color: #28a745; }
-    .google-btn { background-color: #db4437; display: flex; align-items: center; justify-content: center; }
-    .google-btn i { margin-right: 10px; }
-    .green-btn { background-color: #28a745; }
-    .hidden { display: none; }
-
-    .loading {
-      opacity: 0.7;
-      pointer-events: none;
+    .hidden {
+      display: none;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="logo">
-      <img src="images/Screenshot_2025-03-03_184012-removebg-preview.png" alt="Watoto Youth Logo">
-    </div>
-    <div class="logo-text">Watoto Youth</div>
-    <p>Login or Register to access your account.</p>
+  <!-- Navbar -->
+  <div class="navbar">
+    <div class="logo">Watoto Youth</div>
+    <img id="profile-pic" class="profile-pic" src="https://via.placeholder.com/40" alt="Profile Picture">
+  </div>
 
-    <!-- Login Form -->
-    <div id="login-form">
-      <input type="email" id="login-email" class="input-box" placeholder="Email" required>
-      <input type="password" id="login-password" class="input-box" placeholder="Password" required>
-      <button id="login-btn" class="btn login-btn">Log in</button>
-      <button id="show-register-btn" class="btn register-btn">Register</button>
-      <button id="show-phone-login" class="btn green-btn">Login with Phone</button>
-      <button id="google-signin-btn" class="btn google-btn">
-        <i class="fab fa-google"></i> Sign in with Google
-      </button>
+  <!-- Chat Container -->
+  <div class="chat-container">
+    <div id="chat-messages" class="chat-messages"></div>
+    <div class="chat-input">
+      <input type="text" id="message-input" placeholder="Type a message...">
+      <button id="send-btn">Send</button>
     </div>
+  </div>
 
-    <!-- Register Form -->
-    <div id="register-form" class="hidden">
-      <input type="text" id="register-name" class="input-box" placeholder="Full Name" required>
-      <input type="email" id="register-email" class="input-box" placeholder="Email" required>
-      <input type="password" id="register-password" class="input-box" placeholder="Password" required>
-      <input type="password" id="register-confirm-password" class="input-box" placeholder="Confirm Password" required>
-      <button id="register-btn" class="btn register-btn">Register</button>
-      <button id="show-login-btn" class="btn login-btn">Back to Login</button>
-    </div>
-
-    <!-- Phone Login -->
-    <div id="phone-login" class="hidden">
-      <div id="recaptcha-container"></div>
-      <input type="tel" id="phone-number" class="input-box" placeholder="Enter Phone Number" required>
-      <button id="send-otp" class="btn green-btn">Send OTP</button>
-      <input type="text" id="otp-code" class="input-box" placeholder="Enter OTP" required>
-      <button id="verify-otp" class="btn green-btn">Verify OTP</button>
-      <button id="back-to-login" class="btn login-btn">Back to Login</button>
+  <!-- Profile Picture Upload Modal -->
+  <div id="profile-modal" class="hidden">
+    <div class="modal-content">
+      <h2>Upload Profile Picture</h2>
+      <input type="file" id="profile-upload" accept="image/*">
+      <button id="upload-btn">Upload</button>
+      <button id="close-modal">Close</button>
     </div>
   </div>
 
@@ -121,13 +134,22 @@
     
     import { 
       getAuth, 
-      createUserWithEmailAndPassword, 
-      signInWithEmailAndPassword, 
-      RecaptchaVerifier, 
-      signInWithPhoneNumber,
-      GoogleAuthProvider,
-      signInWithPopup
+      onAuthStateChanged 
     } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+    import { 
+      getStorage, 
+      ref, 
+      uploadBytes, 
+      getDownloadURL 
+    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
+
+    import { 
+      getDatabase, 
+      ref as dbRef, 
+      push, 
+      onChildAdded 
+    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
     // Firebase Configuration
     const firebaseConfig = {
@@ -143,157 +165,93 @@
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
-    const googleProvider = new GoogleAuthProvider();
+    const storage = getStorage(app);
+    const database = getDatabase(app);
 
-    // Show/hide forms
-    document.getElementById("show-register-btn").addEventListener("click", () => {
-      document.getElementById("login-form").classList.add("hidden");
-      document.getElementById("register-form").classList.remove("hidden");
+    // DOM Elements
+    const profilePic = document.getElementById("profile-pic");
+    const profileModal = document.getElementById("profile-modal");
+    const profileUpload = document.getElementById("profile-upload");
+    const uploadBtn = document.getElementById("upload-btn");
+    const closeModal = document.getElementById("close-modal");
+    const chatMessages = document.getElementById("chat-messages");
+    const messageInput = document.getElementById("message-input");
+    const sendBtn = document.getElementById("send-btn");
+
+    let currentUser = null;
+
+    // Check Auth State
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        currentUser = user;
+        loadProfilePicture();
+        loadChatMessages();
+      } else {
+        window.location.href = "index.html"; // Redirect to login if not authenticated
+      }
     });
 
-    document.getElementById("show-login-btn").addEventListener("click", () => {
-      document.getElementById("register-form").classList.add("hidden");
-      document.getElementById("login-form").classList.remove("hidden");
+    // Load Profile Picture
+    async function loadProfilePicture() {
+      const storageRef = ref(storage, `profile-pictures/${currentUser.uid}`);
+      try {
+        const url = await getDownloadURL(storageRef);
+        profilePic.src = url;
+      } catch (error) {
+        console.log("No profile picture found. Using default.");
+      }
+    }
+
+    // Upload Profile Picture
+    profilePic.addEventListener("click", () => {
+      profileModal.classList.remove("hidden");
     });
 
-    document.getElementById("show-phone-login").addEventListener("click", () => {
-      document.getElementById("login-form").classList.add("hidden");
-      document.getElementById("phone-login").classList.remove("hidden");
+    uploadBtn.addEventListener("click", async () => {
+      const file = profileUpload.files[0];
+      if (file) {
+        const storageRef = ref(storage, `profile-pictures/${currentUser.uid}`);
+        await uploadBytes(storageRef, file);
+        alert("Profile picture uploaded!");
+        loadProfilePicture();
+        profileModal.classList.add("hidden");
+      } else {
+        alert("Please select a file.");
+      }
+    });
 
-      window.recaptchaVerifier = new RecaptchaVerifier(auth, "recaptcha-container", {
-        size: "normal", // Use "normal" for visible reCAPTCHA
+    closeModal.addEventListener("click", () => {
+      profileModal.classList.add("hidden");
+    });
+
+    // Send Message
+    sendBtn.addEventListener("click", async () => {
+      const message = messageInput.value.trim();
+      if (message) {
+        await push(dbRef(database, "messages"), {
+          sender: currentUser.displayName || "Anonymous",
+          text: message,
+          timestamp: new Date().toISOString()
+        });
+        messageInput.value = "";
+      }
+    });
+
+    // Load Chat Messages
+    function loadChatMessages() {
+      const messagesRef = dbRef(database, "messages");
+      onChildAdded(messagesRef, (snapshot) => {
+        const message = snapshot.val();
+        const messageElement = document.createElement("div");
+        messageElement.classList.add("message");
+        messageElement.innerHTML = `
+          <div class="sender">${message.sender}</div>
+          <div>${message.text}</div>
+        `;
+        chatMessages.appendChild(messageElement);
+        chatMessages.scrollTop = chatMessages.scrollHeight; // Auto-scroll to latest message
       });
-    });
-
-    document.getElementById("back-to-login").addEventListener("click", () => {
-      document.getElementById("phone-login").classList.add("hidden");
-      document.getElementById("login-form").classList.remove("hidden");
-    });
-
-    // Email Login
-    document.getElementById("login-btn").addEventListener("click", async () => {
-      const email = document.getElementById("login-email").value;
-      const password = document.getElementById("login-password").value;
-
-      if (!email || !password) {
-        alert("Please fill in all fields.");
-        return;
-      }
-
-      const loginBtn = document.getElementById("login-btn");
-      loginBtn.classList.add("loading");
-      loginBtn.textContent = "Logging in...";
-
-      try {
-        await signInWithEmailAndPassword(auth, email, password);
-        alert("Login successful!");
-        window.location.href = "main.html";
-      } catch (error) {
-        alert("Login Failed: " + error.message);
-      } finally {
-        loginBtn.classList.remove("loading");
-        loginBtn.textContent = "Log in";
-      }
-    });
-
-    // Register
-    document.getElementById("register-btn").addEventListener("click", async () => {
-      const email = document.getElementById("register-email").value;
-      const password = document.getElementById("register-password").value;
-      const confirmPassword = document.getElementById("register-confirm-password").value;
-
-      if (!email || !password || !confirmPassword) {
-        alert("Please fill in all fields.");
-        return;
-      }
-
-      if (password !== confirmPassword) {
-        alert("Passwords do not match.");
-        return;
-      }
-
-      const registerBtn = document.getElementById("register-btn");
-      registerBtn.classList.add("loading");
-      registerBtn.textContent = "Registering...";
-
-      try {
-        await createUserWithEmailAndPassword(auth, email, password);
-        alert("Registration successful!");
-        window.location.href = "main.html";
-      } catch (error) {
-        alert("Registration Failed: " + error.message);
-      } finally {
-        registerBtn.classList.remove("loading");
-        registerBtn.textContent = "Register";
-      }
-    });
-
-    // Phone Login
-    document.getElementById("send-otp").addEventListener("click", async () => {
-      const phoneNumber = document.getElementById("phone-number").value;
-
-      if (!phoneNumber) {
-        alert("Please enter a phone number.");
-        return;
-      }
-
-      const sendOtpBtn = document.getElementById("send-otp");
-      sendOtpBtn.classList.add("loading");
-      sendOtpBtn.textContent = "Sending OTP...";
-
-      try {
-        const confirmationResult = await signInWithPhoneNumber(auth, phoneNumber, window.recaptchaVerifier);
-        window.confirmationResult = confirmationResult;
-        alert("OTP Sent!");
-      } catch (error) {
-        alert("OTP Failed: " + error.message);
-      } finally {
-        sendOtpBtn.classList.remove("loading");
-        sendOtpBtn.textContent = "Send OTP";
-      }
-    });
-
-    document.getElementById("verify-otp").addEventListener("click", async () => {
-      const otp = document.getElementById("otp-code").value;
-
-      if (!otp) {
-        alert("Please enter the OTP.");
-        return;
-      }
-
-      const verifyOtpBtn = document.getElementById("verify-otp");
-      verifyOtpBtn.classList.add("loading");
-      verifyOtpBtn.textContent = "Verifying...";
-
-      try {
-        await window.confirmationResult.confirm(otp);
-        alert("Phone login successful!");
-        window.location.href = "main.html";
-      } catch (error) {
-        alert("OTP Verification Failed: " + error.message);
-      } finally {
-        verifyOtpBtn.classList.remove("loading");
-        verifyOtpBtn.textContent = "Verify OTP";
-      }
-    });
-
-    // Google Sign-In
-    document.getElementById("google-signin-btn").addEventListener("click", async () => {
-      const googleBtn = document.getElementById("google-signin-btn");
-      googleBtn.classList.add("loading");
-      googleBtn.textContent = "Signing in...";
-
-      try {
-        const result = await signInWithPopup(auth, googleProvider);
-        alert("Google Sign-In successful!");
-        window.location.href = "main.html";
-      } catch (error) {
-        alert("Google Sign-In Failed: " + error.message);
-      } finally {
-        googleBtn.classList.remove("loading");
-        googleBtn.innerHTML = `<i class="fab fa-google"></i> Sign in with Google`;
-      }
-    });
+    }
   </script>
 </body>
 </html>
