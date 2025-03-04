@@ -87,6 +87,9 @@
       <button id="login-btn" class="btn login-btn">Log in</button>
       <button id="show-register-btn" class="btn register-btn">Register</button>
       <button id="show-phone-login" class="btn green-btn">Login with Phone</button>
+      <button id="google-signin-btn" class="btn google-btn">
+        <i class="fab fa-google"></i> Sign in with Google
+      </button>
     </div>
 
     <!-- Register Form -->
@@ -121,7 +124,9 @@
       createUserWithEmailAndPassword, 
       signInWithEmailAndPassword, 
       RecaptchaVerifier, 
-      signInWithPhoneNumber 
+      signInWithPhoneNumber,
+      GoogleAuthProvider,
+      signInWithPopup
     } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
     // Firebase Configuration
@@ -138,6 +143,7 @@
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
+    const googleProvider = new GoogleAuthProvider();
 
     // Show/hide forms
     document.getElementById("show-register-btn").addEventListener("click", () => {
@@ -268,6 +274,24 @@
       } finally {
         verifyOtpBtn.classList.remove("loading");
         verifyOtpBtn.textContent = "Verify OTP";
+      }
+    });
+
+    // Google Sign-In
+    document.getElementById("google-signin-btn").addEventListener("click", async () => {
+      const googleBtn = document.getElementById("google-signin-btn");
+      googleBtn.classList.add("loading");
+      googleBtn.textContent = "Signing in...";
+
+      try {
+        const result = await signInWithPopup(auth, googleProvider);
+        alert("Google Sign-In successful!");
+        window.location.href = "main.html";
+      } catch (error) {
+        alert("Google Sign-In Failed: " + error.message);
+      } finally {
+        googleBtn.classList.remove("loading");
+        googleBtn.innerHTML = `<i class="fab fa-google"></i> Sign in with Google`;
       }
     });
   </script>
