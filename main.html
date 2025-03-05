@@ -3,151 +3,86 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Watoto Youth - Main</title>
-  <!-- FontAwesome for Icons -->
+  <title>Watoto Youth Chat</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <style>
-    /* General Styles */
     body {
       font-family: Arial, sans-serif;
-      background-color: #f9f9f9;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      min-height: 100vh;
-    }
-
-    header {
-      background-color: #4361ee;
-      color: white;
-      width: 100%;
-      padding: 20px;
+      background-color: #f4f4f4;
       text-align: center;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     }
-
     .chat-container {
-      background: white;
       width: 90%;
-      max-width: 600px;
+      max-width: 500px;
+      background: white;
       margin: 20px auto;
       padding: 20px;
       border-radius: 10px;
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-      flex-grow: 1;
-      display: flex;
-      flex-direction: column;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     }
-
     .chat-messages {
-      flex-grow: 1;
+      height: 300px;
       overflow-y: auto;
       border: 1px solid #ccc;
-      border-radius: 5px;
       padding: 10px;
-      margin-bottom: 10px;
-      background-color: #f1f1f1;
+      background: #fff;
+      text-align: left;
     }
-
-    .message {
-      margin-bottom: 10px;
-      padding: 10px;
-      border-radius: 5px;
-      background-color: white;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    }
-
-    .message strong {
-      color: #4361ee;
-    }
-
     .chat-input {
       display: flex;
-      gap: 10px;
+      margin-top: 10px;
     }
-
-    .chat-input input {
-      flex-grow: 1;
+    #chat-input {
+      flex: 1;
       padding: 10px;
       border: 1px solid #ccc;
       border-radius: 5px;
     }
-
-    .chat-input button {
-      padding: 10px 20px;
-      background-color: #4361ee;
+    #send-btn {
+      background-color: #007bff;
       color: white;
       border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-
-    .chat-input button:hover {
-      background-color: #364fc7;
-    }
-
-    footer {
-      background-color: #4361ee;
-      color: white;
-      width: 100%;
       padding: 10px;
-      text-align: center;
-      margin-top: auto;
-    }
-
-    .profile-pic {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
+      margin-left: 5px;
       cursor: pointer;
+      border-radius: 5px;
     }
-
-    .hidden {
-      display: none;
+    #send-btn:hover {
+      background-color: #0056b3;
+    }
+    .message {
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+    }
+    .message strong {
+      display: block;
+      color: #007bff;
+      font-size: 14px;
+    }
+    .message small {
+      display: block;
+      color: #777;
+      font-size: 12px;
     }
   </style>
 </head>
 <body>
-  <header>
-    <h1>Watoto Youth Chat</h1>
-    <p>Welcome to the community!</p>
-    <img id="profile-pic" class="profile-pic" src="https://via.placeholder.com/40" alt="Profile Picture">
-  </header>
-
+  <h1>Watoto Youth Chat</h1>
   <div class="chat-container">
-    <div class="chat-messages" id="chat-messages">
-      <!-- Chat messages will appear here -->
-    </div>
+    <div class="chat-messages" id="chat-messages"></div>
     <div class="chat-input">
       <input type="text" id="chat-input" placeholder="Type your message...">
       <button id="send-btn"><i class="fas fa-paper-plane"></i> Send</button>
     </div>
   </div>
 
-  <footer>
-    <p>&copy; 2024 Watoto Youth. All rights reserved.</p>
-  </footer>
-
-  <!-- Profile Picture Upload Modal -->
-  <div id="profile-modal" class="hidden">
-    <div class="modal-content">
-      <h2>Upload Profile Picture</h2>
-      <input type="file" id="profile-upload" accept="image/*">
-      <button id="upload-btn">Upload</button>
-      <button id="close-modal">Close</button>
-    </div>
-  </div>
-
-  <!-- Firebase and Supabase Scripts -->
+  <!-- Firebase & Firestore -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, where, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-    import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2";
+    import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-    // Firebase Configuration
+    // Firebase Config
     const firebaseConfig = {
       apiKey: "AIzaSyDM8nevINzAsc2t5e1GrpXqYhkB7iVciTU",
       authDomain: "watoto-d3928.firebaseapp.com",
@@ -163,164 +98,67 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    // Supabase Configuration
-    const supabaseUrl = "https://uqocnugmlcuwodexnhur.supabase.co";
-    const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVxb2NudWdtbGN1d29kZXhuaHVyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDExMTYwMzEsImV4cCI6MjA1NjY5MjAzMX0.ZgFSMatcgAQqbVI68APm7C8Rmw0H_jPYNLG0IwZM52w";
-    const supabase = createClient(supabaseUrl, supabaseKey);
-
     // DOM Elements
-    const profilePic = document.getElementById("profile-pic");
-    const profileModal = document.getElementById("profile-modal");
-    const profileUpload = document.getElementById("profile-upload");
-    const uploadBtn = document.getElementById("upload-btn");
-    const closeModal = document.getElementById("close-modal");
-
-    let currentUser = null;
-
-    // Check Auth State
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        currentUser = user;
-        console.log("User logged in:", user.email);
-        loadProfilePicture();
-      } else {
-        window.location.href = "index.html"; // Redirect to login if not logged in
-      }
-    });
-
-    // Upload Profile Picture
-    profilePic.addEventListener("click", () => {
-      profileModal.classList.remove("hidden");
-    });
-
-    uploadBtn.addEventListener("click", async () => {
-      const file = profileUpload.files[0];
-      if (file) {
-        const filePath = await uploadProfilePicture(file, currentUser.uid);
-        if (filePath) {
-          const pictureUrl = await getProfilePictureUrl(currentUser.uid, file.name);
-          await saveProfilePictureUrl(pictureUrl);
-          alert("Profile picture uploaded!");
-          loadProfilePicture();
-          profileModal.classList.add("hidden");
-        }
-      } else {
-        alert("Please select a file.");
-      }
-    });
-
-    closeModal.addEventListener("click", () => {
-      profileModal.classList.add("hidden");
-    });
-
-    // Supabase Functions
-    async function uploadProfilePicture(file, userId) {
-      const { data, error } = await supabase.storage
-        .from("profile-pictures")
-        .upload(`user_${userId}/${file.name}`, file);
-
-      if (error) {
-        console.error("Upload failed:", error.message);
-        return null;
-      } else {
-        console.log("File uploaded:", data);
-        return data.path; // Return the file path
-      }
-    }
-
-    async function getProfilePictureUrl(userId, fileName) {
-      const { data } = supabase.storage
-        .from("profile-pictures")
-        .getPublicUrl(`user_${userId}/${fileName}`);
-
-      return data.publicUrl;
-    }
-
-    // Save Profile Picture URL in Firestore
-    async function saveProfilePictureUrl(url) {
-      const userRef = collection(db, "users");
-      const q = query(userRef, where("uid", "==", currentUser.uid));
-      const querySnapshot = await getDocs(q);
-
-      if (!querySnapshot.empty) {
-        const userDoc = querySnapshot.docs[0];
-        await updateDoc(userDoc.ref, { profilePicture: url });
-      }
-    }
-
-    // Load Profile Picture
-    async function loadProfilePicture() {
-      const userRef = collection(db, "users");
-      const q = query(userRef, where("uid", "==", currentUser.uid));
-      const querySnapshot = await getDocs(q);
-
-      if (!querySnapshot.empty) {
-        const userDoc = querySnapshot.docs[0];
-        const profilePicture = userDoc.data().profilePicture;
-        if (profilePicture) {
-          profilePic.src = profilePicture;
-        }
-      }
-    }
-
-    // Chat Functionality (Firebase)
     const sendBtn = document.getElementById("send-btn");
     const chatInput = document.getElementById("chat-input");
     const chatMessages = document.getElementById("chat-messages");
 
-    sendBtn.addEventListener("click", async () => {
-      const message = chatInput.value.trim();
-      if (message === "") return;
+    let currentUser = null;
 
-      const user = auth.currentUser;
-      if (!user) {
+    // Check if user is logged in
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        currentUser = user;
+        loadChatMessages();
+      } else {
+        alert("Please sign in to chat.");
+      }
+    });
+
+    // Send message function
+    sendBtn.addEventListener("click", async () => {
+      if (!currentUser) {
         alert("You must be logged in to send messages.");
         return;
       }
 
+      const messageText = chatInput.value.trim();
+      if (messageText === "") return;
+
       try {
-        // Get the user's name from Firestore
-        const usersRef = collection(db, "users");
-        const q = query(usersRef, where("uid", "==", user.uid));
-        const querySnapshot = await getDocs(q);
-
-        let userName = "Anonymous";
-        if (!querySnapshot.empty) {
-          const userDoc = querySnapshot.docs[0];
-          userName = userDoc.data().name;
-        }
-
-        // Save the message with the user's name
         await addDoc(collection(db, "messages"), {
-          text: message,
-          name: userName,
-          timestamp: new Date(),
+          text: messageText,
+          name: currentUser.displayName || "Anonymous",
+          timestamp: serverTimestamp(),
         });
 
-        chatInput.value = ""; // Clear input field
+        chatInput.value = "";
       } catch (error) {
         console.error("Error sending message: ", error);
-        alert("Failed to send message.");
       }
     });
 
-    // Load Messages
-    const messagesQuery = query(collection(db, "messages"), orderBy("timestamp"));
+    // Load messages in real-time
+    function loadChatMessages() {
+      const messagesQuery = query(collection(db, "messages"), orderBy("timestamp"));
 
-    onSnapshot(messagesQuery, (snapshot) => {
-      chatMessages.innerHTML = ""; // Clear previous messages
-      snapshot.forEach((doc) => {
-        const message = doc.data();
-        const messageElement = document.createElement("div");
-        messageElement.classList.add("message");
-        messageElement.innerHTML = `
-          <strong>${message.name}</strong>: ${message.text}
-          <small>${new Date(message.timestamp?.toDate()).toLocaleTimeString()}</small>
-        `;
-        chatMessages.appendChild(messageElement);
+      onSnapshot(messagesQuery, (snapshot) => {
+        chatMessages.innerHTML = "";
+        snapshot.forEach((doc) => {
+          const message = doc.data();
+          const messageTime = message.timestamp?.toDate().toLocaleTimeString() || "Just now";
+
+          chatMessages.innerHTML += `
+            <div class="message">
+              <strong>${message.name}</strong>
+              ${message.text}
+              <small>${messageTime}</small>
+            </div>`;
+        });
+
+        chatMessages.scrollTop = chatMessages.scrollHeight;
       });
-      chatMessages.scrollTop = chatMessages.scrollHeight; // Scroll to bottom
-    });
+    }
   </script>
 </body>
 </html>
