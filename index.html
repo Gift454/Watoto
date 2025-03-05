@@ -105,7 +105,7 @@
     <!-- Phone Login -->
     <div id="phone-login" class="hidden">
       <div id="recaptcha-container"></div>
-      <input type="tel" id="phone-number" class="input-box" placeholder="Enter Phone Number" required>
+      <input type="tel" id="phone-number" class="input-box" placeholder="Enter Phone Number (e.g., +256712345678)" required>
       <button id="send-otp" class="btn green-btn">Send OTP</button>
       <input type="text" id="otp-code" class="input-box" placeholder="Enter OTP" required>
       <button id="verify-otp" class="btn green-btn">Verify OTP</button>
@@ -114,6 +114,7 @@
   </div>
 
   <!-- Firebase Script -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/libphonenumber-js/1.10.13/libphonenumber-js.min.js"></script>
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, RecaptchaVerifier, signInWithPhoneNumber, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
@@ -208,18 +209,26 @@
 
     // Phone Login
     document.getElementById("send-otp").addEventListener("click", async () => {
-      const phoneNumber = document.getElementById("phone-number").value;
-      if (!phoneNumber) {
+      const phoneNumberInput = document.getElementById("phone-number").value;
+      if (!phoneNumberInput) {
         alert("Please enter a phone number.");
         return;
       }
+
+      // Format the phone number
+      const phoneNumber = parsePhoneNumberFromString(phoneNumberInput, "UG");
+      if (!phoneNumber || !phoneNumber.isValid()) {
+        alert("Invalid phone number. Please enter a valid Ugandan phone number (e.g., +256712345678).");
+        return;
+      }
+      const formattedNumber = phoneNumber.format("E.164");
 
       const sendOtpBtn = document.getElementById("send-otp");
       sendOtpBtn.classList.add("loading");
       sendOtpBtn.textContent = "Sending OTP...";
 
       try {
-        const confirmationResult = await signInWithPhoneNumber(auth, phoneNumber, window.recaptchaVerifier);
+        const confirmationResult = await signInWithPhoneNumber(auth, formattedNumber, window.recaptchaVerifier);
         window.confirmationResult = confirmationResult;
         alert("OTP Sent!");
       } catch (error) {
